@@ -49,12 +49,14 @@ input.invalid {
 
     function store_city() {
       weather_parameters = [];
-      city_name = document.getElementById("city_name").value;
+      city_name = document.getElementById("city_name").value.trim();
+      if (city_name == "") {
+        alert("City name should not be empty.")
+        return;
+      }
 
-      year = document.getElementById("year").value;
-      var yearRegEx = /^\d{4}$/;
-      y_format = year.match(yearRegEx);
-      if (!y_format) {
+      var year = document.getElementById("year").value;
+      if (!/^\d{4}$/.test(year)) {
         alert("Year should contain 4 digits.");
         return;
       }
@@ -65,6 +67,12 @@ input.invalid {
         2. Add check on month - should be 2 digit number.
       */
 
+      var month = document.getElementById("month").value;
+      var monthInt = parseInt(month);
+      if (!/^\d{2}$/.test(month) || monthInt < 1 || monthInt > 12) {
+        alert("Month should be a 2 digit number between 1 and 12");
+        return;
+      }
 
       if (document.querySelector('input[name="max_temp"]:checked')) {
           weather_parameters.push(document.getElementById("max_temp").value);
@@ -75,6 +83,22 @@ input.invalid {
         1. Verify if min_temp, precipitation and snow are checked; 
         2. Add them to weather_parameters if they are checked.
       */
+      if (document.querySelector('input[name="min_temp"]:checked')) {
+          weather_parameters.push(document.getElementById("min_temp").value);
+      }
+
+      if (document.querySelector('input[name="precipitation"]:checked')) {
+          weather_parameters.push(document.getElementById("precipitation").value);
+      }
+
+      if (document.querySelector('input[name="snow"]:checked')) {
+          weather_parameters.push(document.getElementById("snow").value);
+      }
+
+    if(weather_parameters.length == 0) {
+      alert("Please select at least one weather parameter please");
+      return;
+    }
 
       city_details = {};
       city_details['year'] = year;
@@ -82,22 +106,29 @@ input.invalid {
 
       //Assignment1 TODO:
       //Add month to city_details
+      city_details['month'] = month;
 
       cities[city_name] = city_details;
 
       //Assignment1 TODO: Add an anchor element instead of label element city_name
       // Clicking the anchor element should show an alert with the lesson details
-      city = document.createElement("li");
-      city.setAttribute("id", city_name + "-li");
-      city_label = document.createElement("label");
-      city_label.setAttribute("onclick","show_city('" + city_name + "')");
-      city_label.innerHTML = city_name;
-      city.appendChild(city_label);
-      document.getElementById("city_list").appendChild(city);
+      var city_li = document.createElement("li");
+      city_li.setAttribute("id", city_name + "-li");
+
+      var city_anc = document.createElement("a");
+      city_anc.setAttribute("href", "#");
+      city_anc.setAttribute("onclick", "show_city('" + city_name + "')");
+      city_anc.innerHTML = city_name;
+
+      city_li.appendChild(city_anc);
+      document.getElementById("city_list").appendChild(city_li);
     }
 
     function show_city(city_name) {
-      alert("City details - " + city_name + " TODO: Add year, month, weather_parameters");
+      var data = cities[city_name]
+      var par = data.weather_parameters.join(",");
+
+      alert("City: " + city_name + "\nYear: " + data.year + "\nMonth: " + data.month + "\nWeather Parameters: " + par);
     }
 
     function show_settings() {
@@ -179,7 +210,10 @@ input.invalid {
 				<td><input class="input" type="text" placeholder="YYYY" name="year" id="year" style="width:125%" required></input></td>
       </tr>
       <!-- Assignment1 TODO: Add Month -->
-
+      <tr>
+        <td><label>Month</label></td>
+        <td><input class="input" type="text" placeholder="MM" name="month" id="month" style="width:125%" required></input></td>
+</tr>
 	     <tr>
         <td><label class="label">Weather Parameters</label></td>
 			</tr>
@@ -187,6 +221,9 @@ input.invalid {
 				<td></td>
         <td>
             <input type="checkbox" name="max_temp" id="max_temp" value="max_temp">Max Temperature</input><br></br>
+            <input type="checkbox" name="min_temp" id="min_temp" value="min_temp">Min Temperature</input><br></br>
+            <input type="checkbox" name="precipitation" id="precipitation" value="precipitation">Precipitation</input><br></br>
+            <input type="checkbox" name="snow" id="snow" value="snow">Snow</input><br></br>
             <!-- Assignment1 TODO: Add Min Temperature on new line -->
             <!-- Assignment1 TODO: Add Precipitation on new line -->
             <!-- Assignment1 TODO: Add Snow on new line -->
