@@ -1,1 +1,4 @@
-Assignment 1 for CS329E
+Name: Anusha Dudella
+UTeid: ad48847
+Bitbucket username: anushadudella (but I would prefer Github)
+Comments: N/A
